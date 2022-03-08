@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="shortcut icon" href="/favicon.png">
+    <meta charset="utf-8">
+    <title>IEEE 754 Calculator</title>
+    <style>
+        * {
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: small;
+        }
+        
+        table,
+        th,
+        td {
+            border: 0px;
+            padding: 0px;
+            border-spacing: 0px
+        }
+        
+        p.info {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 800px;
+            text-align: justify
+        }
+        
+        code {
+            font-family: monospace
+        }
+    </style>
+    <script src="d3.min.js" charset="utf-8"></script>
+    <script src="BigInteger.min.js"></script>
+    <script src="Fraction.js"></script>
+    <script src="IEEE.js"></script>
+    <script src="code.js"></script>
+</head>
+
+<body>
+    <center>
+        <h3 style="font-size: large; margin-bottom: 3px">IEEE 754 计算器</h3>
+        <div style="font-size: x-small">(详细信息见页面底部。)</div>
+    </center>
+    <div style="height: 3em"></div>
+    <center>
+        <table>
+            <tr>
+                <th colspan=2></th>
+                <th colspan=3 style="text-align:center">Sign</th>
+                <th colspan=3>Significand</th>
+                <th></th>
+                <th>Exponent</th>
+            </tr>
+            <tr>
+                <td colspan=10 style="height:1.3em"></td>
+            </tr>
+            <tr>
+                <td><input id="in1" style="text-align:right" size="30" style="font-family: monospace" type="text" value="0.0"></td>
+                <td style="width:4em">&nbsp;</td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="sign1" maxlength="1" size="1" style="font-family: monospace" type="text" value="0"></td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="hidden1" disabled maxlength="1" size="1" style="font-family: monospace; color: red" type="text" value="0"></td>
+                <td>.</td>
+                <td><input id="mantissa1" maxlength="52" size="52" style="font-family: monospace" type="text" value="0000000000000000000000000000000000000000000000000000"></td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="exp1" maxlength="11" size="11" style="font-family: monospace" type="text" value="00000000000"></td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="signOut1" style="color:blue; text-align:center; font-weight:bold; font-family:monospace">+</td>
+                <td style="width:2em">&nbsp;</td>
+                <td id="mantissaOut1" colspan=3 style="color:blue; text-align:center; font-weight:bold; font-family:monospace">0.0</td>
+                <td style="width:2em">&nbsp;</td>
+                <td id="expOut1" style="color:blue; text-align:center; font-weight:bold; font-family:monospace">0</td>
+            </tr>
+            <tr>
+                <td colspan=10 style="height:0.3em"></td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="hexOut1" colspan=7 style="color:#505050; text-align:center; font-family:monospace">0x0000000000000000</td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="binOut1" colspan=7 style="color:#505050; text-align:center; font-family:monospace">0b0000000000000000000000000000000000000000000000000000000000000000</td>
+            </tr>
+            <tr>
+                <td colspan=10 style="height:3.5em"></td>
+            </tr>
+            <tr>
+                <td><input id="in2" style="text-align:right" size="30" style="font-family: monospace" type="text" value="0.0"></td>
+                <td style="width:4em">&nbsp;</td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="sign2" maxlength="1" size="1" style="font-family: monospace" type="text" value="0"></td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="hidden2" disabled maxlength="1" size="1" style="font-family: monospace; color: red" type="text" value="0"></td>
+                <td>.</td>
+                <td><input id="mantissa2" maxlength="52" size="52" style="font-family: monospace" type="text" value="0000000000000000000000000000000000000000000000000000"></td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="exp2" maxlength="11" size="11" style="font-family: monospace" type="text" value="00000000000"></td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="signOut2" style="color:blue; text-align:center; font-weight:bold; font-family:monospace">+</td>
+                <td style="width:2em">&nbsp;</td>
+                <td id="mantissaOut2" colspan=3 style="color:blue; text-align:center; font-weight:bold; font-family:monospace">0.0</td>
+                <td style="width:2em">&nbsp;</td>
+                <td id="expOut2" style="color:blue; text-align:center; font-weight:bold; font-family:monospace">0</td>
+            </tr>
+            <tr>
+                <td colspan=10 style="height:0.3em"></td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="hexOut2" colspan=7 style="color:#505050; text-align:center; font-family:monospace">0x0000000000000000</td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="binOut2" colspan=7 style="color:#505050; text-align:center; font-family:monospace">0b0000000000000000000000000000000000000000000000000000000000000000</td>
+            </tr>
+            <tr>
+                <td colspan=10 style="height:2em"></td>
+            </tr>
+            <tr>
+                <td colspan=10 style="text-align: center">
+                    <button id="plusButton" type="button" style="font-family: monospace; font-size: large">+</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="minusButton" type="button" style="font-family: monospace; font-size: large">-</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="timesButton" type="button" style="font-family: monospace; font-size: large">&times;</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="divButton" type="button" style="font-family: monospace; font-size: large">/</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=10 style="height:5em"></td>
+            </tr>
+            <tr>
+                <td><input id="in3" style="text-align:right" size="30" style="font-family: monospace" type="text" value="0.0"></td>
+                <td style="width:4em">&nbsp;</td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="sign3" maxlength="1" size="1" style="font-family: monospace" type="text" value="0"></td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="hidden3" disabled maxlength="1" size="1" style="font-family: monospace; color: red" type="text" value="0"></td>
+                <td>.</td>
+                <td><input id="mantissa3" maxlength="52" size="52" style="font-family: monospace" type="text" value="0000000000000000000000000000000000000000000000000000"></td>
+                <td style="width:2em">&nbsp;</td>
+                <td><input id="exp3" maxlength="11" size="11" style="font-family: monospace" type="text" value="00000000000"></td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="signOut3" style="color:blue; text-align:center; font-weight:bold; font-family:monospace">+</td>
+                <td style="width:2em">&nbsp;</td>
+                <td id="mantissaOut3" colspan=3 style="color:blue; text-align:center; font-weight:bold; font-family:monospace">0.0</td>
+                <td style="width:2em">&nbsp;</td>
+                <td id="expOut3" style="color:blue; text-align:center; font-weight:bold; font-family:monospace">0</td>
+            </tr>
+            <tr>
+                <td colspan=10 style="height:0.3em"></td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="hexOut3" colspan=7 style="color:#505050; text-align:center; font-family:monospace">0x0000000000000000</td>
+            </tr>
+            <tr>
+                <td colspan=3></td>
+                <td id="binOut3" colspan=7 style="color:#505050; text-align:center; font-family:monospace">0b0000000000000000000000000000000000000000000000000000000000000000</td>
+            </tr>
+        </table>
+    </center>
+    <div style="height:20em"></div>
+    <center>
+        <p class="info">
+            这是一个简单的计算器，旨在帮助你理解 <a href="https://zh.wikipedia.org/zh-cn/IEEE_754">IEEE 754</a>标准的浮点计算。它是用<a href="https://zh.wikipedia.org/zh-cn/JavaScript">JavaScript</a>实现的，应该可以在最近的桌面版<a href="https://www.google.cn/chrome/">Chrome</a>和<a href="https://www.firefox.com.cn/">Firefox</a>上运行。
+            我还没有在其他浏览器上测试过。(在Chrome上它看起来有点丑，因为输入框太宽了）。
+        </p>
+        <p class="info">
+            如果你在左边的三个框中输入一个浮点数，并按下<em>Enter</em>键，你会在右边看到这个数字的比特型式。你可以按照编程语言中常见的语法格式来输入数字，例如<code>42</code>, <code>2.345</code>, <code>12E-3</code>等；你也可以输入<code>NaN</code>, <code>Inf</code>, 和 <code>-Inf</code>等值；你还可以使用<code>17/23</code>的型式来输入分数。最后，你就获得了你需要的二进制数形式（他们以<code>0b</code>或<code>0x</code>为开头）。
+        </p>
+        <p class="info">
+            或者你可以逆向操作，选择输入右边的空位。当你按下<em>Enter</em>键，左边的数字就会被更新。在数字段中，你也可以输入一个以<code>+</code>或&nbsp;<code>-</code>开头的小数，而不是比特型式。 (注意，红色数字是
+            <a href="https://en.wikipedia.org/wiki/Significand#Significands_and_the_hidden_bit"><em>隐藏位</em></a>，不能直接改变)。
+        </p>
+        <p class="info">
+            按下四个按钮中的一个，可以对按钮上方的两个数字进行加、减、乘、除，并在下面显示结果。
+        </p>
+        <p class="info">
+            舍入浮点数时使用的是<a href="https://zh.wikipedia.org/zh-cn/IEEE_754#%E6%B5%AE%E9%BB%9E%E6%95%B8%E7%9A%84%E6%8D%A8%E5%85%A5">舍入到最接近浮点数，偶数优先</a>。 代码不区分quite和signaling
+            <a href="https://zh.wikipedia.org/zh-cn/NaN">NaN</a>，即所有的NaN都是quite的，符合IEEE 754-2008标准，Intel 8086处理器采取也是这种形式（小数最高位A &nbsp;为'is_quiet'标记位。即，如果A = 1，则该数是quiet NaN；如果A为零、其余X部分非零，则是signaling NaN）。
+        </p>
+        <p class="info">
+            IEEE标准定义了各种二进制和十进制格式。本页的默认格式是 64位，但你可以使用下面的按钮来切换到其他二进制位。
+        </p>
+        <center>
+            <button id="sizeButton16" type="button">16位&nbsp;</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="sizeButton32" type="button">32位&nbsp;</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="sizeButton64" type="button">64位&nbsp;</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="sizeButton128" type="button">12位8</button>
+        </center>
+        <div style="height: 1em"></div>
+        <p class="info" style="font-size: xx-small">Copyright (c) 2016, <a style="font-size: xx-small" href="http://www.weitz.de/">Prof. Dr. Edmund Weitz</a>.&nbsp;<a style="font-size: xx-small" href="http://weitz.de/imprint.html">Impressum, Datenschutzerklärung</a>.</p>
+        <p class="info" style="font-size: xx-small">本页面仅为中文翻译备份存档，不提供任何商业性用途。若有侵权请联系Email：<a href="mailto:eeriex@zjxu.edu.cn">eeriex@zjxu.edu.cn</a></p>
+    </center>
+</body>
+
+</html>
