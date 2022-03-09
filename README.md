@@ -1,4 +1,6 @@
 # Note:
+Original：http://weitz.de/ieee/
+Chinese Mirror Version：https://www.implementsfreedom.tech/ieee754/ieee754.html
 
     这是一个简单的计算器，旨在帮助你理解 IEEE 754标准的浮点计算。
     它是用JavaScript实现的，应该可以在最近的桌面版Chrome和Firefox上运行。
